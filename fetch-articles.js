@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 const parser = new Parser();
 
-const MAX_ARTICLES = 500;
+const MAX_ARTICLES = 300;
 
 // Mots-clés : au moins un doit apparaître dans titre ou résumé pour les sources généralistes
 const MOTS_CLES = [
@@ -30,7 +30,6 @@ const SOURCES_A_FILTRER = new Set([
   'Création Entreprise',
   'France Active',
   'C2RP / Emfor BFC',
-  'Pro Choisir Mon Métier — Formation',
   'LearnAssembly — Formation & IA',
 ]);
 
@@ -42,28 +41,8 @@ function estPertinent(article) {
 const SOURCES = [
   // Formation professionnelle & CPF
   {
-    name: 'Centre Inffo — Actualités formation',
-    url: 'https://www.centre-inffo.fr/category/site-centre-inffo/actualites-centre-inffo/le-quotidien-de-la-formation-actualite-formation-professionnelle-apprentissage/feed',
-  },
-  {
-    name: 'Centre Inffo — Droit de la formation',
-    url: 'https://www.centre-inffo.fr/category/site-droit-formation/actualites-droit/feed',
-  },
-  {
-    name: 'Centre Inffo — Réforme',
-    url: 'https://www.centre-inffo.fr/category/site-reforme/feed',
-  },
-  {
-    name: 'Centre Inffo — Innovation formation',
-    url: 'https://www.centre-inffo.fr/category/innovation-formation/feed',
-  },
-  {
     name: 'Via Compétences — Emploi & Formation',
     url: 'https://www.via-competences.fr/rss-actualites.xml',
-  },
-  {
-    name: 'Pro Choisir Mon Métier — Formation',
-    url: 'https://pro.choisirmonmetier-paysdelaloire.fr/feed',
   },
   {
     name: 'C2RP / Emfor BFC',
