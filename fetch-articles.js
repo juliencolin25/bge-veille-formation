@@ -122,7 +122,7 @@ async function fetchAndStore() {
   for (const source of SOURCES) {
     console.log(`Fetching: ${source.name}`);
     try {
-      const feed = await parser.parseURL(source.url);
+      const feed = await parser.parseURL(source.url, { timeout: 15000 });
 
       for (const item of feed.items.slice(0, MAX_PAR_SOURCE)) {
         total++;
@@ -160,4 +160,4 @@ async function fetchAndStore() {
   await trimOldArticles();
 }
 
-fetchAndStore();
+fetchAndStore().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
