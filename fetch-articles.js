@@ -16,43 +16,36 @@ const SOURCES = [
     url: 'https://www.centre-inffo.fr/category/site-droit-formation/actualites-droit/feed',
   },
   {
-    name: 'Ministère du Travail',
-    url: 'https://travail-emploi.gouv.fr/rss.xml',
+    name: 'Centre Inffo — Réforme',
+    url: 'https://www.centre-inffo.fr/category/site-reforme/feed',
+  },
+  {
+    name: 'Centre Inffo — Innovation formation',
+    url: 'https://www.centre-inffo.fr/category/innovation-formation/feed',
+  },
+  {
+    name: 'Via Compétences — Emploi & Formation',
+    url: 'https://www.via-competences.fr/rss-actualites.xml',
+  },
+  {
+    name: 'Pro Choisir Mon Métier — Formation',
+    url: 'https://pro.choisirmonmetier-paysdelaloire.fr/feed',
   },
   // Qualiopi & certification
   {
-    name: 'Activ Cert — Qualiopi',
+    name: 'Activ Cert — Qualiopi & Certification',
     url: 'https://activcert.fr/feed',
   },
   // Entrepreneuriat & création d'entreprise
   {
-    name: 'Culture RH — Formation & Management',
-    url: 'https://culture-rh.com/feed',
+    name: 'Création Entreprise',
+    url: 'https://www.creation-entreprise.fr/feed',
   },
 ];
-
-// Filtre pour les sources généralistes : ne garder que les articles pertinents
-const MOTS_CLES = [
-  'formation', 'qualiopi', 'cpf', 'compte personnel de formation',
-  'organisme de formation', 'certification', 'certif',
-  'apprentissage', 'compétences', 'ofpca', 'dreets',
-  'création d\'entreprise', 'entrepreneur', 'entrepreneuriat',
-  'auto-entrepreneur', 'autoentrepreneur', 'micro-entreprise',
-  'financement', 'accompagnement', 'porteur de projet',
-  'travailleur indépendant', 'bge',
-];
-
-const SOURCES_GENERALISTES = ['Ministère du Travail', 'Culture RH — Formation & Management'];
-
-function estPertinent(article) {
-  const texte = `${article.titre} ${article.resume || ''}`.toLowerCase();
-  return MOTS_CLES.some(mot => texte.includes(mot));
-}
 
 async function fetchAndStore() {
   let total = 0;
   let inseres = 0;
-  let filtres = 0;
 
   for (const source of SOURCES) {
     console.log(`Fetching: ${source.name}`);
@@ -68,11 +61,6 @@ async function fetchAndStore() {
           date_publication: item.pubDate ? new Date(item.pubDate).toISOString() : null,
           resume: item.contentSnippet?.substring(0, 500) || item.summary?.substring(0, 500) || null,
         };
-
-        if (SOURCES_GENERALISTES.includes(source.name) && !estPertinent(article)) {
-          filtres++;
-          continue;
-        }
 
         const { error } = await supabase
           .from('articles')
@@ -94,7 +82,7 @@ async function fetchAndStore() {
     }
   }
 
-  console.log(`Terminé : ${inseres} articles insérés, ${filtres} filtrés, ${total} récupérés.`);
+  console.log(`Terminé : ${inseres} nouveaux articles insérés sur ${total} récupérés.`);
 }
 
 fetchAndStore();
