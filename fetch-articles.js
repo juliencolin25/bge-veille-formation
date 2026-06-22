@@ -41,6 +41,27 @@ const SOURCES = [
     name: 'Création Entreprise',
     url: 'https://www.creation-entreprise.fr/feed',
   },
+  {
+    name: 'France Active',
+    url: 'https://www.franceactive.org/feed',
+  },
+  // Digital learning & pédagogie
+  {
+    name: 'Digiformag — Formation digitale',
+    url: 'https://www.digiformag.com/feed',
+  },
+  {
+    name: 'Thot Cursus — Éducation & Formation',
+    url: 'https://cursus.edu/feed',
+  },
+  {
+    name: 'Sydologie — Innovation pédagogique',
+    url: 'https://sydologie.com/feed',
+  },
+  {
+    name: 'Le Café Pédagogique',
+    url: 'https://www.cafepedagogique.net/feed',
+  },
 ];
 
 async function fetchAndStore() {
