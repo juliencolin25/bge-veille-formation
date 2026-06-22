@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 const parser = new Parser({
+  timeout: 15000,
   customFields: {
     item: [
       ['media:content', 'mediaContent', { keepArray: false }],
@@ -122,9 +123,9 @@ async function fetchAndStore() {
   for (const source of SOURCES) {
     console.log(`Fetching: ${source.name}`);
     try {
-      const feed = await parser.parseURL(source.url, { timeout: 15000 });
+      const feed = await parser.parseURL(source.url);
 
-      for (const item of feed.items.slice(0, MAX_PAR_SOURCE)) {
+      for (const item of (feed.items || []).slice(0, MAX_PAR_SOURCE)) {
         total++;
         const article = {
           titre: item.title?.trim() || '(sans titre)',
