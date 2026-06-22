@@ -6,56 +6,43 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 const parser = new Parser();
 
 const SOURCES = [
-  // Formation professionnelle & Qualiopi
+  // Formation professionnelle & CPF
   {
-    name: 'Centre Inffo',
-    url: 'https://www.centre-inffo.fr/site-centre-inffo/rubrique-centre-inffo/actualites/rss.xml',
+    name: 'Centre Inffo — Actualités formation',
+    url: 'https://www.centre-inffo.fr/category/site-centre-inffo/actualites-centre-inffo/le-quotidien-de-la-formation-actualite-formation-professionnelle-apprentissage/feed',
   },
   {
-    name: 'France Compétences',
-    url: 'https://www.francecompetences.fr/feed/',
-  },
-  {
-    name: 'Légifrance - Formation professionnelle',
-    url: 'https://www.legifrance.gouv.fr/api/rss/rss_profession_formation.xml',
+    name: 'Centre Inffo — Droit de la formation',
+    url: 'https://www.centre-inffo.fr/category/site-droit-formation/actualites-droit/feed',
   },
   {
     name: 'Ministère du Travail',
     url: 'https://travail-emploi.gouv.fr/rss.xml',
   },
+  // Qualiopi & certification
   {
-    name: 'FFP - Fédération de la Formation Professionnelle',
-    url: 'https://www.ffp.org/?format=feed&type=rss',
+    name: 'Activ Cert — Qualiopi',
+    url: 'https://activcert.fr/feed',
   },
-  // CPF
+  // Entrepreneuriat & création d'entreprise
   {
-    name: 'Mon Compte Formation - Actualités',
-    url: 'https://www.moncompteformation.gouv.fr/espace-prive/html/#/rss',
-  },
-  // Création d'entreprise & entrepreneuriat
-  {
-    name: 'BPI France Création',
-    url: 'https://bpifrance-creation.fr/feeds/actualites',
-  },
-  {
-    name: "L'Auto-Entrepreneur",
-    url: 'https://www.lautoentrepreneur.fr/feed',
-  },
-  {
-    name: 'Les Echos Entrepreneurs',
-    url: 'https://business.lesechos.fr/entrepreneurs/rss',
+    name: 'Culture RH — Formation & Management',
+    url: 'https://culture-rh.com/feed',
   },
 ];
 
-// Mots-clés : un article doit contenir au moins un de ces termes pour être conservé
+// Filtre pour les sources généralistes : ne garder que les articles pertinents
 const MOTS_CLES = [
   'formation', 'qualiopi', 'cpf', 'compte personnel de formation',
-  'organisme de formation', 'ofpca', 'certif', 'certification',
+  'organisme de formation', 'certification', 'certif',
+  'apprentissage', 'compétences', 'ofpca', 'dreets',
   'création d\'entreprise', 'entrepreneur', 'entrepreneuriat',
   'auto-entrepreneur', 'autoentrepreneur', 'micro-entreprise',
   'financement', 'accompagnement', 'porteur de projet',
-  'bge', 'travailleur indépendant', 'compétences',
+  'travailleur indépendant', 'bge',
 ];
+
+const SOURCES_GENERALISTES = ['Ministère du Travail', 'Culture RH — Formation & Management'];
 
 function estPertinent(article) {
   const texte = `${article.titre} ${article.resume || ''}`.toLowerCase();
@@ -82,9 +69,7 @@ async function fetchAndStore() {
           resume: item.contentSnippet?.substring(0, 500) || item.summary?.substring(0, 500) || null,
         };
 
-        // Pour les sources généralistes, filtrer par mots-clés
-        const sourcesGeneralistes = ['Ministère du Travail', 'Les Echos Entrepreneurs'];
-        if (sourcesGeneralistes.includes(source.name) && !estPertinent(article)) {
+        if (SOURCES_GENERALISTES.includes(source.name) && !estPertinent(article)) {
           filtres++;
           continue;
         }
@@ -109,7 +94,7 @@ async function fetchAndStore() {
     }
   }
 
-  console.log(`Terminé : ${inseres} nouveaux articles insérés, ${filtres} filtrés, ${total} récupérés au total.`);
+  console.log(`Terminé : ${inseres} articles insérés, ${filtres} filtrés, ${total} récupérés.`);
 }
 
 fetchAndStore();

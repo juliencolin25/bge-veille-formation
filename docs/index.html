@@ -6,92 +6,230 @@
   <title>Veille Formation — BGE Franche-Comté</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; color: #333; }
+    body { font-family: Arial, sans-serif; background: #f2f6fb; color: #000; }
+
+    /* HEADER */
     header {
-      background: #1a3c6e;
-      color: white;
-      padding: 24px 32px;
+      background: #fff;
+      border-bottom: 4px solid #45BCCF;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
     }
-    header h1 { font-size: 1.6rem; }
-    header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
-    .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
-    .filters {
+    header img { height: 70px; }
+    .header-divider {
+      width: 2px;
+      height: 50px;
+      background: #45BCCF;
+    }
+    .header-text h1 {
+      font-family: Arial, sans-serif;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #004999;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .header-text p {
+      font-size: 0.82rem;
+      color: #93B0B6;
+      margin-top: 3px;
+    }
+
+    /* BARRE LATERALE + LAYOUT */
+    .page-layout {
+      display: flex;
+      min-height: calc(100vh - 110px);
+    }
+    .sidebar {
+      width: 8px;
+      background: #45BCCF;
+      flex-shrink: 0;
+    }
+    .main { flex: 1; padding: 28px 32px; }
+
+    /* TOOLBAR */
+    .toolbar {
+      background: #fff;
+      border-radius: 6px;
+      padding: 14px 18px;
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      align-items: center;
+      margin-bottom: 18px;
+      border-left: 4px solid #009FE3;
     }
-    .filters select, .filters input {
+    .toolbar input[type="text"] {
+      flex: 1;
+      min-width: 200px;
       padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      border: 1px solid #c8d8e8;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+      font-size: 0.88rem;
+      color: #000;
+      outline: none;
     }
-    .filters input { flex: 1; min-width: 200px; }
-    #count { font-size: 0.85rem; color: #666; margin-bottom: 12px; }
-    .article {
-      background: white;
-      border-radius: 8px;
-      padding: 16px 20px;
+    .toolbar input[type="text"]:focus { border-color: #004999; }
+    .toolbar select {
+      padding: 8px 12px;
+      border: 1px solid #c8d8e8;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+      font-size: 0.88rem;
+      color: #000;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+    }
+    .toolbar select:focus { border-color: #004999; }
+
+    #count {
+      font-size: 0.8rem;
+      color: #93B0B6;
       margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
     }
-    .article h2 { font-size: 1rem; margin-bottom: 6px; }
-    .article h2 a { color: #1a3c6e; text-decoration: none; }
-    .article h2 a:hover { text-decoration: underline; }
-    .article .meta { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
-    .article .source {
-      display: inline-block;
-      background: #e8f0fb;
-      color: #1a3c6e;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      margin-right: 8px;
+
+    #loading, #error {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 0.95rem;
+      color: #93B0B6;
     }
-    .article p { font-size: 0.88rem; color: #555; line-height: 1.5; }
-    #loading { text-align: center; padding: 40px; color: #888; }
-    #error { text-align: center; padding: 40px; color: #c0392b; }
-    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    #error { color: #E63328; }
+
+    /* ARTICLE CARD */
+    .article {
+      background: #fff;
+      border-radius: 4px;
+      padding: 16px 20px 16px 18px;
+      margin-bottom: 10px;
+      border-left: 5px solid #004999;
+    }
+    .article:hover { border-left-color: #009FE3; }
+
+    .article h2 {
+      font-family: Arial, sans-serif;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #004999;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .article h2 a { color: #004999; text-decoration: none; }
+    .article h2 a:hover { color: #0072A7; text-decoration: underline; }
+
+    .article .meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 7px;
+    }
+    .badge {
+      background: #e6f4fb;
+      color: #0072A7;
+      padding: 2px 9px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .date { font-size: 0.77rem; color: #93B0B6; }
+
+    .article p {
+      font-size: 0.85rem;
+      color: #333;
+      line-height: 1.55;
+    }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
     .pagination button {
       padding: 6px 14px;
-      border: 1px solid #1a3c6e;
-      background: white;
-      color: #1a3c6e;
-      border-radius: 6px;
+      border: 1px solid #c8d8e8;
+      background: #fff;
+      color: #004999;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-family: Arial, sans-serif;
+      font-size: 0.83rem;
+      font-weight: bold;
     }
-    .pagination button.active { background: #1a3c6e; color: white; }
-    .pagination button:hover:not(.active) { background: #e8f0fb; }
+    .pagination button.active {
+      background: #004999;
+      color: #fff;
+      border-color: #004999;
+    }
+    .pagination button:hover:not(.active) {
+      background: #e6f4fb;
+      border-color: #009FE3;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #004999;
+      text-align: center;
+      padding: 14px;
+      font-family: Arial, sans-serif;
+      font-size: 0.72rem;
+      color: #45BCCF;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    footer a { color: #45BCCF; text-decoration: none; }
+    footer a:hover { color: #fff; }
   </style>
 </head>
 <body>
+
   <header>
-    <h1>Veille Formation — BGE Franche-Comté</h1>
-    <p>Actualités formation professionnelle et Qualiopi</p>
-  </header>
-  <div class="container">
-    <div class="filters">
-      <input type="text" id="search" placeholder="Rechercher un mot-clé..." />
-      <select id="sourceFilter">
-        <option value="">Toutes les sources</option>
-      </select>
+    <img src="logo-bge.png" alt="BGE Franche-Comté — Appui aux entrepreneurs" />
+    <div class="header-divider"></div>
+    <div class="header-text">
+      <h1>Veille Formation</h1>
+      <p>Formation professionnelle · CPF · Qualiopi · Entrepreneuriat</p>
     </div>
-    <div id="count"></div>
-    <div id="loading">Chargement des articles...</div>
-    <div id="error" style="display:none;"></div>
-    <div id="articles"></div>
-    <div class="pagination" id="pagination"></div>
+  </header>
+
+  <div class="page-layout">
+    <div class="sidebar"></div>
+    <div class="main">
+      <div class="toolbar">
+        <input type="text" id="search" placeholder="Rechercher un mot-clé..." />
+        <select id="sourceFilter">
+          <option value="">Toutes les sources</option>
+        </select>
+      </div>
+      <div id="count"></div>
+      <div id="loading">Chargement des articles…</div>
+      <div id="error" style="display:none;"></div>
+      <div id="articles"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
   </div>
+
+  <footer>
+    BGE Franche-Comté &nbsp;·&nbsp; Appui aux entrepreneurs &nbsp;·&nbsp;
+    <a href="https://www.bgefc.org" target="_blank">bgefc.org</a>
+  </footer>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const SUPABASE_URL = 'https://izxetyflcrbbukevgkbf.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eGV0eWZsY3JiYnVrZXZna2JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjM0MzcsImV4cCI6MjA5NzY5OTQzN30.mM_ASVSU9ZdOBzL6KLFtkyOxnXFFoqu6gNrEVnGNW9w';
-
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = createClient(
+      'https://izxetyflcrbbukevgkbf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eGV0eWZsY3JiYnVrZXZna2JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjM0MzcsImV4cCI6MjA5NzY5OTQzN30.mM_ASVSU9ZdOBzL6KLFtkyOxnXFFoqu6gNrEVnGNW9w'
+    );
 
     const PAGE_SIZE = 20;
     let allArticles = [];
@@ -104,8 +242,9 @@
         .select('*')
         .order('date_publication', { ascending: false });
 
+      document.getElementById('loading').style.display = 'none';
+
       if (error) {
-        document.getElementById('loading').style.display = 'none';
         document.getElementById('error').style.display = 'block';
         document.getElementById('error').textContent = 'Erreur de chargement : ' + error.message;
         return;
@@ -114,7 +253,6 @@
       allArticles = data;
       populateSourceFilter();
       applyFilters();
-      document.getElementById('loading').style.display = 'none';
     }
 
     function populateSourceFilter() {
@@ -144,7 +282,14 @@
       const start = (currentPage - 1) * PAGE_SIZE;
       const page = filtered.slice(start, start + PAGE_SIZE);
       const container = document.getElementById('articles');
-      document.getElementById('count').textContent = `${filtered.length} article${filtered.length > 1 ? 's' : ''}`;
+      const n = filtered.length;
+      document.getElementById('count').textContent = `${n} article${n > 1 ? 's' : ''}`;
+
+      if (n === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#93B0B6;padding:40px;">Aucun article trouvé.</p>';
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
 
       container.innerHTML = page.map(a => {
         const date = a.date_publication
@@ -154,8 +299,8 @@
           <div class="article">
             <h2><a href="${a.lien}" target="_blank" rel="noopener">${a.titre}</a></h2>
             <div class="meta">
-              <span class="source">${a.source}</span>
-              ${date}
+              <span class="badge">${a.source}</span>
+              ${date ? `<span class="date">${date}</span>` : ''}
             </div>
             ${a.resume ? `<p>${a.resume}</p>` : ''}
           </div>
@@ -178,7 +323,7 @@
         btn.addEventListener('click', () => {
           currentPage = parseInt(btn.dataset.page);
           render();
-          window.scrollTo(0, 0);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
     }
