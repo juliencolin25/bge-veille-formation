@@ -6,6 +6,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 const parser = new Parser();
 
 const MAX_ARTICLES = 300;
+const MAX_PAR_SOURCE = 20;
 
 // Mots-clés : au moins un doit apparaître dans titre ou résumé pour les sources généralistes
 const MOTS_CLES = [
@@ -136,7 +137,7 @@ async function fetchAndStore() {
     try {
       const feed = await parser.parseURL(source.url);
 
-      for (const item of feed.items) {
+      for (const item of feed.items.slice(0, MAX_PAR_SOURCE)) {
         total++;
         const article = {
           titre: item.title?.trim() || '(sans titre)',
