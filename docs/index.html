@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veille Formation — BGE Franche-Comté</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; color: #333; }
+    header {
+      background: #1a3c6e;
+      color: white;
+      padding: 24px 32px;
+    }
+    header h1 { font-size: 1.6rem; }
+    header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+    .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filters select, .filters input {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .filters input { flex: 1; min-width: 200px; }
+    #count { font-size: 0.85rem; color: #666; margin-bottom: 12px; }
+    .article {
+      background: white;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    .article h2 { font-size: 1rem; margin-bottom: 6px; }
+    .article h2 a { color: #1a3c6e; text-decoration: none; }
+    .article h2 a:hover { text-decoration: underline; }
+    .article .meta { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+    .article .source {
+      display: inline-block;
+      background: #e8f0fb;
+      color: #1a3c6e;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-right: 8px;
+    }
+    .article p { font-size: 0.88rem; color: #555; line-height: 1.5; }
+    #loading { text-align: center; padding: 40px; color: #888; }
+    #error { text-align: center; padding: 40px; color: #c0392b; }
+    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .pagination button {
+      padding: 6px 14px;
+      border: 1px solid #1a3c6e;
+      background: white;
+      color: #1a3c6e;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .pagination button.active { background: #1a3c6e; color: white; }
+    .pagination button:hover:not(.active) { background: #e8f0fb; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Veille Formation — BGE Franche-Comté</h1>
+    <p>Actualités formation professionnelle et Qualiopi</p>
+  </header>
+  <div class="container">
+    <div class="filters">
+      <input type="text" id="search" placeholder="Rechercher un mot-clé..." />
+      <select id="sourceFilter">
+        <option value="">Toutes les sources</option>
+      </select>
+    </div>
+    <div id="count"></div>
+    <div id="loading">Chargement des articles...</div>
+    <div id="error" style="display:none;"></div>
+    <div id="articles"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL = 'https://izxetyflcrbbukevgkbf.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eGV0eWZsY3JiYnVrZXZna2JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjM0MzcsImV4cCI6MjA5NzY5OTQzN30.mM_ASVSU9ZdOBzL6KLFtkyOxnXFFoqu6gNrEVnGNW9w';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const PAGE_SIZE = 20;
+    let allArticles = [];
+    let filtered = [];
+    let currentPage = 1;
+
+    async function loadArticles() {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('date_publication', { ascending: false });
+
+      if (error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').textContent = 'Erreur de chargement : ' + error.message;
+        return;
+      }
+
+      allArticles = data;
+      populateSourceFilter();
+      applyFilters();
+      document.getElementById('loading').style.display = 'none';
+    }
+
+    function populateSourceFilter() {
+      const sources = [...new Set(allArticles.map(a => a.source))].sort();
+      const sel = document.getElementById('sourceFilter');
+      sources.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        sel.appendChild(opt);
+      });
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const src = document.getElementById('sourceFilter').value;
+      filtered = allArticles.filter(a => {
+        const matchQ = !q || a.titre.toLowerCase().includes(q) || (a.resume || '').toLowerCase().includes(q);
+        const matchSrc = !src || a.source === src;
+        return matchQ && matchSrc;
+      });
+      currentPage = 1;
+      render();
+    }
+
+    function render() {
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const page = filtered.slice(start, start + PAGE_SIZE);
+      const container = document.getElementById('articles');
+      document.getElementById('count').textContent = `${filtered.length} article${filtered.length > 1 ? 's' : ''}`;
+
+      container.innerHTML = page.map(a => {
+        const date = a.date_publication
+          ? new Date(a.date_publication).toLocaleDateString('fr-FR')
+          : '';
+        return `
+          <div class="article">
+            <h2><a href="${a.lien}" target="_blank" rel="noopener">${a.titre}</a></h2>
+            <div class="meta">
+              <span class="source">${a.source}</span>
+              ${date}
+            </div>
+            ${a.resume ? `<p>${a.resume}</p>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+      const container = document.getElementById('pagination');
+      if (totalPages <= 1) { container.innerHTML = ''; return; }
+      let html = '';
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+      }
+      container.innerHTML = html;
+      container.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentPage = parseInt(btn.dataset.page);
+          render();
+          window.scrollTo(0, 0);
+        });
+      });
+    }
+
+    document.getElementById('search').addEventListener('input', applyFilters);
+    document.getElementById('sourceFilter').addEventListener('change', applyFilters);
+
+    loadArticles();
+  </script>
+</body>
+</html>
