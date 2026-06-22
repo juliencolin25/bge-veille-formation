@@ -97,6 +97,11 @@ const SOURCES = [
     name: 'CRÉDOC — Études socio-économiques',
     url: 'https://www.credoc.fr/feed',
   },
+  // Qualiopi
+  {
+    name: 'Veille Formation — Qualiopi',
+    url: 'https://www.veilleformation.com/feed',
+  },
 ];
 
 async function trimOldArticles() {
