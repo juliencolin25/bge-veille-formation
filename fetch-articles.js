@@ -165,9 +165,6 @@ async function fetchAndStore() {
           image_url: extraireImage(item),
         };
 
-        if (SOURCES_A_FILTRER.has(source.name) && !estPertinent(article)) {
-          continue;
-        }
 
         const { error } = await supabase
           .from('articles')
