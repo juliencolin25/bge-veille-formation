@@ -25,36 +25,6 @@ function extraireImage(item) {
 const MAX_ARTICLES = 300;
 const MAX_PAR_SOURCE = 20;
 
-// Mots-clés : au moins un doit apparaître dans titre ou résumé pour les sources généralistes
-const MOTS_CLES = [
-  'formation professionnelle', 'formation continue', 'organisme de formation',
-  'cpf', 'compte personnel de formation',
-  'qualiopi', 'certification', 'certif', 'habilitation',
-  'apprentissage', 'alternance', 'contrat de professionnalisation',
-  'compétences', 'plan de développement',
-  'création d\'entreprise', 'créer son entreprise', 'créateur', 'porteur de projet',
-  'entrepreneuriat', 'entrepreneur', 'auto-entrepreneur', 'autoentrepreneur',
-  'micro-entreprise', 'reprise d\'entreprise',
-  'financement de la formation', 'opco', 'dreets', 'france travail',
-  'vae', 'validation des acquis', 'bilan de compétences',
-  'e-learning', 'digital learning', 'formation à distance', 'foad',
-  'ingénierie pédagogique', 'ingénierie de formation',
-];
-
-// Sources généralistes qui nécessitent un filtre par mots-clés
-const SOURCES_A_FILTRER = new Set([
-  'Le Café Pédagogique',
-  'Thot Cursus — Éducation & Formation',
-  'Création Entreprise',
-  'France Active',
-  'C2RP / Emfor BFC',
-  'LearnAssembly — Formation & IA',
-]);
-
-function estPertinent(article) {
-  const texte = `${article.titre} ${article.resume || ''}`.toLowerCase();
-  return MOTS_CLES.some(mot => texte.includes(mot));
-}
 
 const SOURCES = [
   // Formation professionnelle & CPF
