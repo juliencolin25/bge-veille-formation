@@ -87,6 +87,16 @@ const SOURCES = [
     name: "L'Atelier du Formateur",
     url: 'https://latelierduformateur.fr/feed',
   },
+  // Handicap & emploi
+  {
+    name: 'PRITH BFC — Handicap & Emploi',
+    url: 'https://www.prith-bfc.fr/feed',
+  },
+  // Études & recherche
+  {
+    name: 'CRÉDOC — Études socio-économiques',
+    url: 'https://www.credoc.fr/feed',
+  },
 ];
 
 async function trimOldArticles() {
