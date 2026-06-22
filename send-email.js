@@ -56,6 +56,9 @@ function buildHtml(articles, totalDispo) {
               <table width="100%" cellpadding="0" cellspacing="0"
                 style="background:#ffffff;border-left:5px solid #004999;border-radius:3px;">
                 <tr>
+                  ${a.image_url ? `<td style="padding:14px 0 14px 14px;vertical-align:top;width:100px;">
+                    <img src="${a.image_url}" width="90" style="display:block;border-radius:3px;object-fit:cover;" alt="">
+                  </td>` : ''}
                   <td style="padding:14px 18px;">
                     <div style="font-family:Arial,sans-serif;font-size:10px;color:#009FE3;
                                 font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;

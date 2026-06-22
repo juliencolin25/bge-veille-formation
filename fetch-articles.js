@@ -3,7 +3,24 @@ import Parser from 'rss-parser';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-const parser = new Parser();
+const parser = new Parser({
+  customFields: {
+    item: [
+      ['media:content', 'mediaContent', { keepArray: false }],
+      ['media:thumbnail', 'mediaThumbnail', { keepArray: false }],
+      ['enclosure', 'enclosure', { keepArray: false }],
+    ],
+  },
+});
+
+function extraireImage(item) {
+  return (
+    item.mediaThumbnail?.$.url ||
+    item.mediaContent?.$.url ||
+    item.enclosure?.url ||
+    null
+  );
+}
 
 const MAX_ARTICLES = 300;
 const MAX_PAR_SOURCE = 20;
@@ -145,6 +162,7 @@ async function fetchAndStore() {
           source: source.name,
           date_publication: item.pubDate ? new Date(item.pubDate).toISOString() : null,
           resume: item.contentSnippet?.substring(0, 500) || item.summary?.substring(0, 500) || null,
+          image_url: extraireImage(item),
         };
 
         if (SOURCES_A_FILTRER.has(source.name) && !estPertinent(article)) {
