@@ -2,7 +2,7 @@ name: Email hebdomadaire
 
 on:
   schedule:
-    - cron: '45 9 * * 1'
+    - cron: '0 10 * * 1'
   workflow_dispatch:       # déclenchement manuel possible
 
 jobs:
